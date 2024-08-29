@@ -1,0 +1,43 @@
+pragma solidity ^0.8.0;
+
+contract EventRSVP {
+    struct Event {
+        string name;
+        string date;
+        string time;
+        string location;
+        string description;
+        address[] attendees;
+    }
+
+    mapping(uint => Event) public events;
+    uint public eventCount = 0;
+
+    function createEvent(
+        string memory _name,
+        string memory _date,
+        string memory _time,
+        string memory _location,
+        string memory _description
+    ) public {
+        eventCount++;
+        events[eventCount] = Event(
+            _name,
+            _date,
+            _time,
+            _location,
+            _description,
+            new address[](0)   
+        );
+    }
+
+    function rsvpToEvent(uint _eventId) public {
+        require(_eventId > 0 && _eventId <= eventCount, "Event does not exist");
+        events[_eventId].attendees.push(msg.sender);
+    }
+
+    function getAttendees(uint _eventId) public view returns (address[] memory) {
+        require(_eventId > 0 && _eventId <= eventCount, "Event does not exist");
+        return events[_eventId].attendees;
+    }
+}
